@@ -1,27 +1,35 @@
 using API.Data;
+using API.Extensions;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
-builder.Services.AddDbContext<DatingContext>(optionsAction: options =>
+internal class Program
 {
-    options.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
-});
-builder.Services.AddCors();
-builder.Services.AddControllers();
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
 
-var app = builder.Build();
+        // Add services to the container.
+
+       
+        builder.Services.AddServices(builder.Configuration);
+        builder.Services.AddCors();
+
+        builder.Services.AddControllers();
+
+        var app = builder.Build();
 
 
-// Configure the HTTP request pipeline.
-app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
+        // Configure the HTTP request pipeline.
+        app.UseCors(x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200"));
 
 
-//app.UseHttpsRedirection();
+        //app.UseHttpsRedirection();
 
-//app.UseAuthorization();
+        app.UseAuthentication();
+        app.UseAuthorization();
 
-app.MapControllers();
+        app.MapControllers();
 
-app.Run();
+        app.Run();
+    }
+}
