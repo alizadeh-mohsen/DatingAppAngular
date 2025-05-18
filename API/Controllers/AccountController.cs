@@ -40,12 +40,12 @@ namespace API.Controllers
         {
             var user = await context.AppUsers.FirstOrDefaultAsync(x => x.UserName.ToLower() == loginDto.Username.ToLower());
             if (user == null)
-                return Unauthorized("Username not found");
+                return Unauthorized("Invalid Username");
 
             using var hmac = new HMACSHA512(user.PasswordSalt);
             var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
             if (!computedHash.SequenceEqual(user.PasswordHash))
-                return Unauthorized("Invalid password");
+                return Unauthorized("Invalid Password");
 
 
             var userDto = tokenService.CreateToken(user);
